@@ -4,20 +4,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Surrogates - Chapter 1 | Surrogates-GP-with-Python</title>
+<title>Chapter 1 | Surrogates-GP-with-Python</title>
 <meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="Surrogates - Chapter 1" />
+<meta property="og:title" content="Chapter 1" />
 <meta name="author" content="Zeel Patel" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="A Python attempt to revise Surrogates GP" />
-<meta property="og:description" content="A Python attempt to revise Surrogates GP" />
+<meta name="description" content="N degree polynomial regression and case study of GP in Aircarft wing weight example" />
+<meta property="og:description" content="N degree polynomial regression and case study of GP in Aircarft wing weight example" />
 <link rel="canonical" href="https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html" />
 <meta property="og:url" content="https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html" />
 <meta property="og:site_name" content="Surrogates-GP-with-Python" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2021-02-18T00:00:00-06:00" />
 <script type="application/ld+json">
-{"url":"https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html","@type":"BlogPosting","headline":"Surrogates - Chapter 1","dateModified":"2021-02-18T00:00:00-06:00","datePublished":"2021-02-18T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html"},"author":{"@type":"Person","name":"Zeel Patel"},"description":"A Python attempt to revise Surrogates GP","@context":"https://schema.org"}</script>
+{"url":"https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html","@type":"BlogPosting","headline":"Chapter 1","dateModified":"2021-02-18T00:00:00-06:00","datePublished":"2021-02-18T00:00:00-06:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://patel-zeel.github.io/Surrogates-GP-with-Python/gp/2021/02/18/Chap-1.html"},"author":{"@type":"Person","name":"Zeel Patel"},"description":"N degree polynomial regression and case study of GP in Aircarft wing weight example","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/Surrogates-GP-with-Python/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://patel-zeel.github.io/Surrogates-GP-with-Python/feed.xml" title="Surrogates-GP-with-Python" /><link rel="shortcut icon" type="image/x-icon" href="/Surrogates-GP-with-Python/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
@@ -88,7 +88,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Surrogates - Chapter 1</h1><p class="page-description">A Python attempt to revise Surrogates GP</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-02-18T00:00:00-06:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Chapter 1</h1><p class="page-description">N degree polynomial regression and case study of GP in Aircarft wing weight example</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-02-18T00:00:00-06:00" itemprop="datePublished">
         Feb 18, 2021
       </time>• 
           <span itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -135,19 +135,17 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h1"><a href="#1.1.1">1.1.1 </a>
+<li class="toc-entry toc-h1"><a href="#Content">Content </a>
 <ul>
-<li class="toc-entry toc-h2"><a href="#Simple-order-1-polynomial-$\eta-=-50-+-8x_1-+-3x_2$">Simple order 1 polynomial $\eta = 50 + 8x_1 + 3x_2$ </a></li>
-<li class="toc-entry toc-h2"><a href="#Adding-interaction-term-$\eta-=-50-+-8x_1-+-3x_2----4x_1x_2$">Adding interaction term $\eta = 50 + 8x_1 + 3x_2  - 4x_1x_2$ </a></li>
-<li class="toc-entry toc-h2"><a href="#Adding-squared-terms-$\eta-=-50-+-8x_1-+-3x_2---7x_1^2---3x_2^2---4x_1x_2$">Adding squared terms $\eta = 50 + 8x_1 + 3x_2 - 7x_1^2 - 3x_2^2 - 4x_1x_2$ </a>
-<ul>
-<li class="toc-entry toc-h3"><a href="#Stationary-ridge-$80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$">Stationary ridge $80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Simple-order-1-polynomial:-$\eta-=-50-+-8x_1-+-3x_2$">Simple order 1 polynomial: $\eta = 50 + 8x_1 + 3x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Adding-interaction-term:-$\eta-=-50-+-8x_1-+-3x_2----4x_1x_2$">Adding interaction term: $\eta = 50 + 8x_1 + 3x_2  - 4x_1x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Adding-squared-terms:-$\eta-=-50-+-8x_1-+-3x_2---7x_1^2---3x_2^2---4x_1x_2$">Adding squared terms: $\eta = 50 + 8x_1 + 3x_2 - 7x_1^2 - 3x_2^2 - 4x_1x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Stationary-ridge:-$\eta-=-80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$">Stationary ridge: $\eta = 80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Saddle-point:-$\eta-=-80-+-4x_1-+-8x_2---2x_1---12x_2---12x_1x_2$">Saddle point: $\eta = 80 + 4x_1 + 8x_2 - 2x_1 - 12x_2 - 12x_1x_2$ </a></li>
+<li class="toc-entry toc-h2"><a href="#Aircraft-wing-weight-example-(1.2.1)">Aircraft wing weight example (1.2.1) </a></li>
 </ul>
 </li>
-<li class="toc-entry toc-h2"><a href="#Saddle">Saddle </a></li>
-<li class="toc-entry toc-h2"><a href="#1.2.1-Aircraft-wing-weight-example">1.2.1 Aircraft wing weight example </a></li>
-</ul>
-</li>
+<li class="toc-entry toc-h1"><a href="#Homework">Homework </a></li>
 </ul><!--
 #################################################
 ### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
@@ -157,6 +155,15 @@ window.onload = wrap_img;
 
 <div class="container" id="notebook-container">
         
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Content">
+<a class="anchor" href="#Content" aria-hidden="true"><span class="octicon octicon-link"></span></a>Content<a class="anchor-link" href="#Content"> </a>
+</h1>
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -183,17 +190,8 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="1.1.1">
-<a class="anchor" href="#1.1.1" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1.1<a class="anchor-link" href="#1.1.1"> </a>
-</h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Simple-order-1-polynomial-$\eta-=-50-+-8x_1-+-3x_2$">
-<a class="anchor" href="#Simple-order-1-polynomial-%24%5Ceta-=-50-+-8x_1-+-3x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple order 1 polynomial $\eta = 50 + 8x_1 + 3x_2$<a class="anchor-link" href="#Simple-order-1-polynomial-%24%5Ceta-=-50-+-8x_1-+-3x_2%24"> </a>
+<h2 id="Simple-order-1-polynomial:-$\eta-=-50-+-8x_1-+-3x_2$">
+<a class="anchor" href="#Simple-order-1-polynomial:-%24%5Ceta-=-50-+-8x_1-+-3x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple order 1 polynomial: $\eta = 50 + 8x_1 + 3x_2$<a class="anchor-link" href="#Simple-order-1-polynomial:-%24%5Ceta-=-50-+-8x_1-+-3x_2%24"> </a>
 </h2>
 </div>
 </div>
@@ -244,8 +242,8 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Adding-interaction-term-$\eta-=-50-+-8x_1-+-3x_2----4x_1x_2$">
-<a class="anchor" href="#Adding-interaction-term-%24%5Ceta-=-50-+-8x_1-+-3x_2----4x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding interaction term $\eta = 50 + 8x_1 + 3x_2  - 4x_1x_2$<a class="anchor-link" href="#Adding-interaction-term-%24%5Ceta-=-50-+-8x_1-+-3x_2----4x_1x_2%24"> </a>
+<h2 id="Adding-interaction-term:-$\eta-=-50-+-8x_1-+-3x_2----4x_1x_2$">
+<a class="anchor" href="#Adding-interaction-term:-%24%5Ceta-=-50-+-8x_1-+-3x_2----4x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding interaction term: $\eta = 50 + 8x_1 + 3x_2  - 4x_1x_2$<a class="anchor-link" href="#Adding-interaction-term:-%24%5Ceta-=-50-+-8x_1-+-3x_2----4x_1x_2%24"> </a>
 </h2>
 </div>
 </div>
@@ -473,36 +471,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_imgf5a6a2d13aed4ce89c07bd1255c6195c">
+  <img id="_anim_imgef3568f2b37944279aee7eb3d996da5e">
   <div class="anim-controls">
-    <input id="_anim_sliderf5a6a2d13aed4ce89c07bd1255c6195c" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="animf5a6a2d13aed4ce89c07bd1255c6195c.set_frame(parseInt(this.value));">&lt;/input&gt;
+    <input id="_anim_slideref3568f2b37944279aee7eb3d996da5e" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="animef3568f2b37944279aee7eb3d996da5e.set_frame(parseInt(this.value));">&lt;/input&gt;
     <div class="anim-buttons">
-      <button title="Decrease speed" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.slower()">
+      <button title="Decrease speed" onclick="animef3568f2b37944279aee7eb3d996da5e.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.first_frame()">
+      <button title="First frame" onclick="animef3568f2b37944279aee7eb3d996da5e.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.previous_frame()">
+      <button title="Previous frame" onclick="animef3568f2b37944279aee7eb3d996da5e.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.reverse_animation()">
+      <button title="Play backwards" onclick="animef3568f2b37944279aee7eb3d996da5e.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.pause_animation()">
+      <button title="Pause" onclick="animef3568f2b37944279aee7eb3d996da5e.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.play_animation()">
+      <button title="Play" onclick="animef3568f2b37944279aee7eb3d996da5e.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.next_frame()">
+      <button title="Next frame" onclick="animef3568f2b37944279aee7eb3d996da5e.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.last_frame()">
+      <button title="Last frame" onclick="animef3568f2b37944279aee7eb3d996da5e.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" onclick="animf5a6a2d13aed4ce89c07bd1255c6195c.faster()">
+      <button title="Increase speed" onclick="animef3568f2b37944279aee7eb3d996da5e.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" action="#n" name="_anim_loop_selectf5a6a2d13aed4ce89c07bd1255c6195c" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_f5a6a2d13aed4ce89c07bd1255c6195c">
-      <label for="_anim_radio1_f5a6a2d13aed4ce89c07bd1255c6195c">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_f5a6a2d13aed4ce89c07bd1255c6195c" checked>
-      <label for="_anim_radio2_f5a6a2d13aed4ce89c07bd1255c6195c">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_f5a6a2d13aed4ce89c07bd1255c6195c">
-      <label for="_anim_radio3_f5a6a2d13aed4ce89c07bd1255c6195c">Reflect</label>
+    <form title="Repetition mode" action="#n" name="_anim_loop_selectef3568f2b37944279aee7eb3d996da5e" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_ef3568f2b37944279aee7eb3d996da5e">
+      <label for="_anim_radio1_ef3568f2b37944279aee7eb3d996da5e">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_ef3568f2b37944279aee7eb3d996da5e" checked>
+      <label for="_anim_radio2_ef3568f2b37944279aee7eb3d996da5e">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_ef3568f2b37944279aee7eb3d996da5e">
+      <label for="_anim_radio3_ef3568f2b37944279aee7eb3d996da5e">Reflect</label>
     </form>
   </div>
 </div>
@@ -512,9 +510,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgf5a6a2d13aed4ce89c07bd1255c6195c";
-    var slider_id = "_anim_sliderf5a6a2d13aed4ce89c07bd1255c6195c";
-    var loop_select_id = "_anim_loop_selectf5a6a2d13aed4ce89c07bd1255c6195c";
+    var img_id = "_anim_imgef3568f2b37944279aee7eb3d996da5e";
+    var slider_id = "_anim_slideref3568f2b37944279aee7eb3d996da5e";
+    var loop_select_id = "_anim_loop_selectef3568f2b37944279aee7eb3d996da5e";
     var frames = new Array(9);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbAAAAEgCAYAAADVKCZpAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -8134,7 +8132,7 @@ AAAASUVORK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animf5a6a2d13aed4ce89c07bd1255c6195c = new Animation(frames, img_id, slider_id, 200.0,
+        animef3568f2b37944279aee7eb3d996da5e = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -8153,8 +8151,8 @@ AAAASUVORK5CYII=\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Adding-squared-terms-$\eta-=-50-+-8x_1-+-3x_2---7x_1^2---3x_2^2---4x_1x_2$">
-<a class="anchor" href="#Adding-squared-terms-%24%5Ceta-=-50-+-8x_1-+-3x_2---7x_1%5E2---3x_2%5E2---4x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding squared terms $\eta = 50 + 8x_1 + 3x_2 - 7x_1^2 - 3x_2^2 - 4x_1x_2$<a class="anchor-link" href="#Adding-squared-terms-%24%5Ceta-=-50-+-8x_1-+-3x_2---7x_1%5E2---3x_2%5E2---4x_1x_2%24"> </a>
+<h2 id="Adding-squared-terms:-$\eta-=-50-+-8x_1-+-3x_2---7x_1^2---3x_2^2---4x_1x_2$">
+<a class="anchor" href="#Adding-squared-terms:-%24%5Ceta-=-50-+-8x_1-+-3x_2---7x_1%5E2---3x_2%5E2---4x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding squared terms: $\eta = 50 + 8x_1 + 3x_2 - 7x_1^2 - 3x_2^2 - 4x_1x_2$<a class="anchor-link" href="#Adding-squared-terms:-%24%5Ceta-=-50-+-8x_1-+-3x_2---7x_1%5E2---3x_2%5E2---4x_1x_2%24"> </a>
 </h2>
 </div>
 </div>
@@ -8382,36 +8380,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_imgb496c70e9b3c4a989c56ca8b660b14d3">
+  <img id="_anim_img1efd580aeb814f7b946d75efa68343b1">
   <div class="anim-controls">
-    <input id="_anim_sliderb496c70e9b3c4a989c56ca8b660b14d3" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="animb496c70e9b3c4a989c56ca8b660b14d3.set_frame(parseInt(this.value));">&lt;/input&gt;
+    <input id="_anim_slider1efd580aeb814f7b946d75efa68343b1" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anim1efd580aeb814f7b946d75efa68343b1.set_frame(parseInt(this.value));">&lt;/input&gt;
     <div class="anim-buttons">
-      <button title="Decrease speed" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.slower()">
+      <button title="Decrease speed" onclick="anim1efd580aeb814f7b946d75efa68343b1.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.first_frame()">
+      <button title="First frame" onclick="anim1efd580aeb814f7b946d75efa68343b1.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.previous_frame()">
+      <button title="Previous frame" onclick="anim1efd580aeb814f7b946d75efa68343b1.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.reverse_animation()">
+      <button title="Play backwards" onclick="anim1efd580aeb814f7b946d75efa68343b1.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.pause_animation()">
+      <button title="Pause" onclick="anim1efd580aeb814f7b946d75efa68343b1.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.play_animation()">
+      <button title="Play" onclick="anim1efd580aeb814f7b946d75efa68343b1.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.next_frame()">
+      <button title="Next frame" onclick="anim1efd580aeb814f7b946d75efa68343b1.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.last_frame()">
+      <button title="Last frame" onclick="anim1efd580aeb814f7b946d75efa68343b1.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" onclick="animb496c70e9b3c4a989c56ca8b660b14d3.faster()">
+      <button title="Increase speed" onclick="anim1efd580aeb814f7b946d75efa68343b1.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" action="#n" name="_anim_loop_selectb496c70e9b3c4a989c56ca8b660b14d3" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_b496c70e9b3c4a989c56ca8b660b14d3">
-      <label for="_anim_radio1_b496c70e9b3c4a989c56ca8b660b14d3">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_b496c70e9b3c4a989c56ca8b660b14d3" checked>
-      <label for="_anim_radio2_b496c70e9b3c4a989c56ca8b660b14d3">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_b496c70e9b3c4a989c56ca8b660b14d3">
-      <label for="_anim_radio3_b496c70e9b3c4a989c56ca8b660b14d3">Reflect</label>
+    <form title="Repetition mode" action="#n" name="_anim_loop_select1efd580aeb814f7b946d75efa68343b1" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_1efd580aeb814f7b946d75efa68343b1">
+      <label for="_anim_radio1_1efd580aeb814f7b946d75efa68343b1">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_1efd580aeb814f7b946d75efa68343b1" checked>
+      <label for="_anim_radio2_1efd580aeb814f7b946d75efa68343b1">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_1efd580aeb814f7b946d75efa68343b1">
+      <label for="_anim_radio3_1efd580aeb814f7b946d75efa68343b1">Reflect</label>
     </form>
   </div>
 </div>
@@ -8421,9 +8419,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgb496c70e9b3c4a989c56ca8b660b14d3";
-    var slider_id = "_anim_sliderb496c70e9b3c4a989c56ca8b660b14d3";
-    var loop_select_id = "_anim_loop_selectb496c70e9b3c4a989c56ca8b660b14d3";
+    var img_id = "_anim_img1efd580aeb814f7b946d75efa68343b1";
+    var slider_id = "_anim_slider1efd580aeb814f7b946d75efa68343b1";
+    var loop_select_id = "_anim_loop_select1efd580aeb814f7b946d75efa68343b1";
     var frames = new Array(7);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbAAAAEgCAYAAADVKCZpAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -15608,7 +15606,7 @@ BMk/RQXlgPBPUUGLuzpbM2buM8xRiGbM1AOCIAwFfqQihD7/ute3A4eArcDOmw7bLYpi1zs0RTNm\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animb496c70e9b3c4a989c56ca8b660b14d3 = new Animation(frames, img_id, slider_id, 200.0,
+        anim1efd580aeb814f7b946d75efa68343b1 = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -15627,9 +15625,9 @@ BMk/RQXlgPBPUUGLuzpbM2buM8xRiGbM1AOCIAwFfqQihD7/ute3A4eArcDOmw7bLYpi1zs0RTNm\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Stationary-ridge-$80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$">
-<a class="anchor" href="#Stationary-ridge-%2480+4x_1+8x_2-3x_1%5E2-12x_2%5E2-12x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stationary ridge $80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$<a class="anchor-link" href="#Stationary-ridge-%2480+4x_1+8x_2-3x_1%5E2-12x_2%5E2-12x_1x_2%24"> </a>
-</h3>
+<h2 id="Stationary-ridge:-$\eta-=-80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$">
+<a class="anchor" href="#Stationary-ridge:-%24%5Ceta-=-80+4x_1+8x_2-3x_1%5E2-12x_2%5E2-12x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stationary ridge: $\eta = 80+4x_1+8x_2-3x_1^2-12x_2^2-12x_1x_2$<a class="anchor-link" href="#Stationary-ridge:-%24%5Ceta-=-80+4x_1+8x_2-3x_1%5E2-12x_2%5E2-12x_1x_2%24"> </a>
+</h2>
 </div>
 </div>
 </div>
@@ -15856,36 +15854,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_img69fd2af1a36a43d98b1f19c8db77ca87">
+  <img id="_anim_imga8dfa3ddb4474f389009a3412c4481af">
   <div class="anim-controls">
-    <input id="_anim_slider69fd2af1a36a43d98b1f19c8db77ca87" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anim69fd2af1a36a43d98b1f19c8db77ca87.set_frame(parseInt(this.value));">&lt;/input&gt;
+    <input id="_anim_slidera8dfa3ddb4474f389009a3412c4481af" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anima8dfa3ddb4474f389009a3412c4481af.set_frame(parseInt(this.value));">&lt;/input&gt;
     <div class="anim-buttons">
-      <button title="Decrease speed" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.slower()">
+      <button title="Decrease speed" onclick="anima8dfa3ddb4474f389009a3412c4481af.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.first_frame()">
+      <button title="First frame" onclick="anima8dfa3ddb4474f389009a3412c4481af.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.previous_frame()">
+      <button title="Previous frame" onclick="anima8dfa3ddb4474f389009a3412c4481af.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.reverse_animation()">
+      <button title="Play backwards" onclick="anima8dfa3ddb4474f389009a3412c4481af.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.pause_animation()">
+      <button title="Pause" onclick="anima8dfa3ddb4474f389009a3412c4481af.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.play_animation()">
+      <button title="Play" onclick="anima8dfa3ddb4474f389009a3412c4481af.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.next_frame()">
+      <button title="Next frame" onclick="anima8dfa3ddb4474f389009a3412c4481af.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.last_frame()">
+      <button title="Last frame" onclick="anima8dfa3ddb4474f389009a3412c4481af.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" onclick="anim69fd2af1a36a43d98b1f19c8db77ca87.faster()">
+      <button title="Increase speed" onclick="anima8dfa3ddb4474f389009a3412c4481af.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" action="#n" name="_anim_loop_select69fd2af1a36a43d98b1f19c8db77ca87" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_69fd2af1a36a43d98b1f19c8db77ca87">
-      <label for="_anim_radio1_69fd2af1a36a43d98b1f19c8db77ca87">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_69fd2af1a36a43d98b1f19c8db77ca87" checked>
-      <label for="_anim_radio2_69fd2af1a36a43d98b1f19c8db77ca87">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_69fd2af1a36a43d98b1f19c8db77ca87">
-      <label for="_anim_radio3_69fd2af1a36a43d98b1f19c8db77ca87">Reflect</label>
+    <form title="Repetition mode" action="#n" name="_anim_loop_selecta8dfa3ddb4474f389009a3412c4481af" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_a8dfa3ddb4474f389009a3412c4481af">
+      <label for="_anim_radio1_a8dfa3ddb4474f389009a3412c4481af">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_a8dfa3ddb4474f389009a3412c4481af" checked>
+      <label for="_anim_radio2_a8dfa3ddb4474f389009a3412c4481af">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_a8dfa3ddb4474f389009a3412c4481af">
+      <label for="_anim_radio3_a8dfa3ddb4474f389009a3412c4481af">Reflect</label>
     </form>
   </div>
 </div>
@@ -15895,9 +15893,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_img69fd2af1a36a43d98b1f19c8db77ca87";
-    var slider_id = "_anim_slider69fd2af1a36a43d98b1f19c8db77ca87";
-    var loop_select_id = "_anim_loop_select69fd2af1a36a43d98b1f19c8db77ca87";
+    var img_id = "_anim_imga8dfa3ddb4474f389009a3412c4481af";
+    var slider_id = "_anim_slidera8dfa3ddb4474f389009a3412c4481af";
+    var loop_select_id = "_anim_loop_selecta8dfa3ddb4474f389009a3412c4481af";
     var frames = new Array(13);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbAAAAEgCAYAAADVKCZpAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -30129,7 +30127,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anim69fd2af1a36a43d98b1f19c8db77ca87 = new Animation(frames, img_id, slider_id, 200.0,
+        anima8dfa3ddb4474f389009a3412c4481af = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -30148,8 +30146,8 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Saddle">
-<a class="anchor" href="#Saddle" aria-hidden="true"><span class="octicon octicon-link"></span></a>Saddle<a class="anchor-link" href="#Saddle"> </a>
+<h2 id="Saddle-point:-$\eta-=-80-+-4x_1-+-8x_2---2x_1---12x_2---12x_1x_2$">
+<a class="anchor" href="#Saddle-point:-%24%5Ceta-=-80-+-4x_1-+-8x_2---2x_1---12x_2---12x_1x_2%24" aria-hidden="true"><span class="octicon octicon-link"></span></a>Saddle point: $\eta = 80 + 4x_1 + 8x_2 - 2x_1 - 12x_2 - 12x_1x_2$<a class="anchor-link" href="#Saddle-point:-%24%5Ceta-=-80-+-4x_1-+-8x_2---2x_1---12x_2---12x_1x_2%24"> </a>
 </h2>
 </div>
 </div>
@@ -30162,7 +30160,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">saddle</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">c0</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">c1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">c3</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c4</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">c5</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">c0</span> <span class="o">+</span> <span class="n">c1</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="n">c2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="n">c3</span><span class="o">*</span><span class="n">x1</span> <span class="o">-</span> <span class="n">c4</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="n">c5</span><span class="o">*</span><span class="n">x1</span><span class="o">*</span><span class="n">x2</span>
+    <span class="k">return</span> <span class="n">c0</span> <span class="o">+</span> <span class="n">c1</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="n">c2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="n">c3</span><span class="o">*</span><span class="n">x1</span> <span class="o">-</span> <span class="n">c4</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="n">c5</span><span class="o">*</span><span class="n">x1</span><span class="o">*</span><span class="n">x2</span> 
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">x1</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
@@ -30199,9 +30197,22 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.2.1-Aircraft-wing-weight-example">
-<a class="anchor" href="#1.2.1-Aircraft-wing-weight-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2.1 Aircraft wing weight example<a class="anchor-link" href="#1.2.1-Aircraft-wing-weight-example"> </a>
+<h2 id="Aircraft-wing-weight-example-(1.2.1)">
+<a class="anchor" href="#Aircraft-wing-weight-example-(1.2.1)" aria-hidden="true"><span class="octicon octicon-link"></span></a>Aircraft wing weight example (1.2.1)<a class="anchor-link" href="#Aircraft-wing-weight-example-(1.2.1)"> </a>
 </h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The weight of aircraft is considered a function of 9 parameters given by following equation,
+$$
+W = 0.036 S_{\mathrm{w}}^{0.758} W_{\mathrm{fw}}^{0.0035} \left(\frac{A}{\cos^2 \Lambda} \right)^{0.6}
+q^{0.006} \lambda^{0.04} \left( \frac{100 R_{\mathrm{tc}}}{\cos \Lambda} \right)^{-0.3}
+(N_{\mathrm{z}} W_{\mathrm{dg}})^{0.49} 
+$$</p>
+
 </div>
 </div>
 </div>
@@ -30241,7 +30252,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Generating $100 \times 100$ grid to check interactions between $A$ (aspect ratio) and $N_z$ (ultimate load factor)</p>
+<p>Generating $100 \times 100$ grid and checking interactions between $A$ (aspect ratio) and $N_z$ (ultimate load factor) keeping other parameters default.</p>
 
 </div>
 </div>
@@ -30290,7 +30301,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, checking interactions between $\lambda$ (taper ratio) and $W_{fw}$ (weight of fuel in wing)</p>
+<p>Now, checking interactions between $\lambda$ (taper ratio) and $W_{fw}$ (weight of fuel in wing) in the same way.</p>
 
 </div>
 </div>
@@ -30339,8 +30350,9 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Generating grids for each pair (total $^9C_2$ = 36) and evaluating $100 \times 100$ grid is not computationally tengible.</p>
-<p>Let's generate 1000 Latin Hypercube samples (LHS) for 9 dimensions of interest.</p>
+<p>This interaction does not add a lot value in estimation of weight.</p>
+<p>Generating grids for each pair (total $^9C_2$ = 36) and evaluating $100 \times 100$ grid ($360K$ points) is not computationally tengible. We will use surrogate GP to learn the underlying phenomena using far lesser points.</p>
+<p>Let's generate 1000 Latin Hypercube samples (<a href="https://en.wikipedia.org/wiki/Latin_hypercube_sampling">LHS</a>) for 9 dimensions of interest.</p>
 
 </div>
 </div>
@@ -30399,7 +30411,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, We will evaluate this input space in wingwt function to generate response variable wing weight.</p>
+<p>Now, We will evaluate this input space in wingwt function to generate 1000 values for response variable weight.</p>
 
 </div>
 </div>
@@ -30441,7 +30453,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We fit the only features given in book chosen by backward step selection and BIC criterion</p>
+<p>First we will try with 1st order polynomial regression with interaction terms. Let us use backward step selection, BIC criterion and 5 fold cv to select the best model.</p>
 
 </div>
 </div>
@@ -30456,7 +30468,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">PolynomialFeatures</span>
 <span class="n">trans</span> <span class="o">=</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">interaction_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="c1"># from mlxtend.feature_selection import SequentialFeatureSelector as sfs</span>
+<span class="kn">from</span> <span class="nn">mlxtend.feature_selection</span> <span class="kn">import</span> <span class="n">SequentialFeatureSelector</span> <span class="k">as</span> <span class="n">sfs</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">37</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Y</span><span class="p">));</span>
@@ -30506,8 +30518,8 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As per book, interaction between A and Nz is not captured though we know it exists.</p>
-<p>Now, We will fit a GP and visualize interaction between A and Nz</p>
+<p>Interaction between A and Nz is not captured though we know it exists.</p>
+<p>Now, We will fit a GP.</p>
 
 </div>
 </div>
@@ -30560,40 +30572,7 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;paramz.optimization.optimization.opt_lbfgsb at 0x7fc56eeae3d0&gt;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">wingwt</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;function __main__.wingwt(Sw=0.48, Wfw=0.4, A=0.38, L=0.5, q=0.62, l=0.344, Rtc=0.4, Nz=0.37, Wdg=0.38)&gt;</pre>
+<pre>&lt;paramz.optimization.optimization.opt_lbfgsb at 0x7faa16a0a4c0&gt;</pre>
 </div>
 
 </div>
@@ -30720,6 +30699,14 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>We have successfully captured the relationship between $N_z, A$ and $W$ with 1000 simulated points.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Now, doing 1D sensitivity analysis for all 9 process variables</p>
 
 </div>
@@ -30814,6 +30801,15 @@ J/5Ah6hGzU8edQBTo0aNGjU/SdQlRDVq1KhR85Pk/wDbI72Xvu8EfwAAAABJRU5ErkJggg==\
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Variables l, L, Wfw and q are not very useful in determining yields of response variable.</p>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Homework">
+<a class="anchor" href="#Homework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Homework<a class="anchor-link" href="#Homework"> </a>
+</h1>
 </div>
 </div>
 </div>
